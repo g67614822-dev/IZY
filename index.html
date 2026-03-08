@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="mg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IZY KIOSQUE - Professional Gaming Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050505;
+            --text: #ffffff;
+            --card-bg: rgba(0, 0, 0, 0.85);
+            --led-shadow: 0 0 15px var(--primary);
+        }
+
+        .light-mode {
+            --primary: #0077ff;
+            --secondary: #5500aa;
+            --bg: #f0f2f5;
+            --text: #121212;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --led-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .bg-fixed {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/258ba53b-99f8-4d2a-954d-8e12151a92cf.png') no-repeat center center/cover;
+            filter: blur(20px); z-index: -2; opacity: 0.4;
+        }
+
+        header {
+            display: flex; align-items: center; padding: 12px 20px;
+            background: var(--card-bg); border-bottom: 3px solid var(--primary);
+            box-shadow: var(--led-shadow); position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--primary); margin-right: 12px; }
+        .brand { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold; text-shadow: 0 0 10px var(--primary); }
+
+        .nav-icons { margin-left: auto; display: flex; gap: 15px; }
+        .icon-3d { width: 30px; height: 30px; cursor: pointer; transition: 0.3s; filter: drop-shadow(0 0 5px var(--primary)); }
+        .icon-3d:hover { transform: scale(1.1); }
+
+        /* LED Animation Card */
+        .led-box {
+            position: relative; background: #000; border-radius: 15px;
+            padding: 3px; overflow: hidden; display: flex; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+        .led-box::before {
+            content: ''; position: absolute; width: 160%; height: 160%;
+            background: conic-gradient(transparent, transparent, var(--primary), var(--secondary));
+            animation: rotate 4s linear infinite; top: -30%; left: -30%;
+        }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
+        .inner { background: var(--card-bg); border-radius: 12px; width: 100%; padding: 15px; z-index: 1; text-align: center; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .offer-img { width: 100%; border-radius: 8px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1); }
+
+        .btn-gaming {
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            border: none; color: white; padding: 12px; width: 100%;
+            border-radius: 8px; cursor: pointer; font-family: 'Orbitron';
+            font-weight: bold; text-transform: uppercase; margin: 8px 0;
+            box-shadow: 0 0 10px var(--secondary); transition: 0.3s;
+        }
+        .btn-gaming:hover { filter: brightness(1.2); box-shadow: 0 0 20px var(--primary); }
+        .btn-back { background: #333 !important; box-shadow: none !important; margin-top: 20px; }
+
+        .gaming-input {
+            width: 90%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.6);
+            border: 2px solid var(--primary); color: #fff; border-radius: 8px;
+            text-align: center; font-family: 'Orbitron'; outline: none;
+        }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; padding: 25px;
+            box-sizing: border-box; display: none; backdrop-filter: blur(15px);
+            overflow-y: auto;
+        }
+
+        .modal-box { max-width: 400px; margin: 50px auto; }
+        .hidden { display: none; }
+        
+        #user-msg-list, #admin-list { margin-top: 20px; }
+        .status-card { border-left: 4px solid var(--primary); background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-fixed"></div>
+
+    <header>
+        <img src="https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/c0032137-c7db-494d-9103-d7772e18f131.jpg" class="logo-img">
+        <div class="brand">IZY KIOSQUE</div>
+        <div class="nav-icons">
+            <img src="https://cdn-icons-png.flaticon.com/512/702/702471.png" class="icon-3d" onclick="toggleTheme()" title="Mode">
+            <img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" class="icon-3d" onclick="openMessages()" title="Messages">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="icon-3d" onclick="openLoginAdmin()" title="Admin">
+        </div>
+    </header>
+
+    <div id="view-home" class="grid">
+        <div class="led-box"><div class="inner">
+            <img src="https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/d021f38e-a294-41fb-af20-dfe6b2c7d898.gif" class="offer-img">
+            <button class="btn-gaming" onclick="showTarif('PUBG')">PUBG MOBILE</button>
+        </div></div>
+        <div class="led-box"><div class="inner">
+            <img src="https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/3d8082f2-a237-4666-8fa5-6b5e177401a9.gif" class="offer-img">
+            <button class="btn-gaming" onclick="showFFMenu()">FREE FIRE</button>
+        </div></div>
+    </div>
+
+    <div id="view-ff-menu" class="hidden" style="padding:20px;">
+        <div class="led-box"><div class="inner" onclick="showTarif('TOPUP')">TOP UP</div></div>
+        <div class="led-box"><div class="inner" onclick="showTarif('LEVELUP')">LEVEL UP</div></div>
+        <div class="led-box"><div class="inner" onclick="showTarif('ABO')">ABONNEMENT</div></div>
+        <button class="btn-gaming btn-back" onclick="goHome()">HIVERINA</button>
+    </div>
+
+    <div id="view-tarifs" class="hidden">
+        <div id="tarif-list" class="grid"></div>
+        <div style="padding:0 20px 20px 20px;">
+            <button class="btn-gaming btn-back" onclick="goHome()">HIVERINA</button>
+        </div>
+    </div>
+
+    <div id="view-form" class="hidden" style="padding:20px;">
+        <div class="led-box"><div class="inner">
+            <h2 id="item-title" style="color:var(--primary); font-family:Orbitron;"></h2>
+            <input type="text" id="uid" class="gaming-input" placeholder="UID PLAYER">
+            <input type="text" id="pseudo" class="gaming-input" placeholder="PSEUDO PLAYER">
+            <p>METHODE PAYMENT:</p>
+            <button class="btn-gaming" style="background:#d32f2f" onclick="preparePay('MVOLA')">MVOLA</button>
+            <button class="btn-gaming" style="background:#ef6c00" onclick="preparePay('ORANGE')">ORANGE MONEY</button>
+            <button class="btn-gaming btn-back" onclick="goHome()">HIVERINA</button>
+        </div></div>
+    </div>
+
+    <div id="view-final" class="hidden" style="padding:20px;">
+        <div class="led-box"><div class="inner">
+            <h3 id="pay-num" style="color:var(--primary)"></h3>
+            <button class="btn-gaming" id="btn-ussd">TRANSFÉRÉ RAPIDE (USSD)</button>
+            <input type="text" id="ref" class="gaming-input" placeholder="REFERENCE TRANSACTION">
+            <button class="btn-gaming" onclick="submitOrder()">CONFIRMER</button>
+            <button class="btn-gaming btn-back" onclick="goHome()">HIVERINA</button>
+        </div></div>
+    </div>
+
+    <div id="overlay-confirm" class="overlay">
+        <div class="led-box modal-box"><div class="inner">
+            <img src="https://cdn-icons-png.flaticon.com/512/5610/5610944.png" style="width:70px">
+            <h3 style="color:var(--primary); font-family:Orbitron;">MIANDRY KELY FA EO AM-PANAMARINANA NY COMMANDE-NAO IZAHAY TOMPOKO ⌛✅</h3>
+            <button class="btn-gaming" onclick="location.reload()">D'ACCORD</button>
+        </div></div>
+    </div>
+
+    <div id="overlay-login" class="overlay">
+        <div class="led-box modal-box"><div class="inner">
+            <h2 style="color:var(--primary)">ADMIN ACCESS</h2>
+            <input type="password" id="admin-code" class="gaming-input" placeholder="ENTER CODE">
+            <button class="btn-gaming" onclick="validateAdmin()">UNLOCK</button>
+            <button class="btn-gaming btn-back" onclick="closeOverlay('overlay-login')">CANCEL</button>
+        </div></div>
+    </div>
+
+    <div id="overlay-admin" class="overlay">
+        <h2 style="font-family:Orbitron; color:var(--primary)">COMMANDES REÇUES</h2>
+        <div id="admin-list"></div>
+        <button class="btn-gaming btn-back" onclick="closeOverlay('overlay-admin')">FERMER PANEL</button>
+    </div>
+
+    <div id="overlay-msg" class="overlay">
+        <h2 style="font-family:Orbitron; color:var(--primary)">STATUS COMMANDE</h2>
+        <div id="user-msg-list"></div>
+        <button class="btn-gaming btn-back" onclick="closeOverlay('overlay-msg')">HAKATONA</button>
+    </div>
+
+    <script>
+        let current = { name: "", price: 0, method: "" };
+        let orders = JSON.parse(localStorage.getItem('kiosque_v3')) || [];
+
+        function toggleTheme() { document.body.classList.toggle('light-mode'); }
+        
+        function hideAll() {
+            document.querySelectorAll('div[id^="view-"]').forEach(d => d.classList.add('hidden'));
+        }
+
+        function goHome() {
+            hideAll();
+            document.getElementById('view-home').classList.remove('hidden');
+        }
+
+        function showFFMenu() {
+            hideAll();
+            document.getElementById('view-ff-menu').classList.remove('hidden');
+        }
+
+        function showTarif(type) {
+            const list = document.getElementById('tarif-list');
+            list.innerHTML = "";
+            let data = [];
+            let img = "https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/49b718be-8b38-4096-817a-5096c0e6cb57.png";
+
+            if(type === 'TOPUP') data = [{n:"110💎", p:4750}, {n:"220💎", p:9500}, {n:"330💎", p:14250}, {n:"440💎", p:19000}, {n:"530💎", p:24500}, {n:"1080💎", p:46500}, {n:"2200💎", p:93500}, {n:"5600💎", p:224500}];
+            else if(type === 'LEVELUP') data = [{n:"Lv06 (120💎)", p:3000}, {n:"Lv10 (200💎)", p:5500}, {n:"Lv15 (200💎)", p:5500}, {n:"Lv20 (200💎)", p:5500}, {n:"Lv25 (200💎)", p:5500}, {n:"Lv30 (350💎)", p:6500}];
+            else if(type === 'ABO') data = [{n:"WEEKLY", p:12500, i:"https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/b38ff59f-b158-4147-b87a-9299ba328ae8.jpg"}, {n:"MONTHLY", p:47500, i:"https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/33931ff9-8e36-4e95-85bb-e1414b3eb30b.jpg"}];
+            else if(type === 'PUBG') {
+                img = "https://i.supaimg.com/62b9403a-3b65-4a39-b581-a60ad795f96a/7c1ef9b0-b490-4170-84a2-54538251fa3b.jpg";
+                data = [{n:"60UC", p:4500}, {n:"180UC", p:12500}, {n:"240UC", p:16600}, {n:"325UC", p:20500}, {n:"445UC", p:29000}, {n:"505UC", p:33000}, {n:"660UC", p:41700}, {n:"840UC", p:53700}];
+            }
+
+            data.forEach(x => {
+                list.innerHTML += `<div class="led-box"><div class="inner">
+                    <img src="${x.i || img}" class="offer-img">
+                    <p style="font-weight:bold">${x.n}<br><span style="color:var(--primary)">${x.p} Ar</span></p>
+                    <button class="btn-gaming" onclick="selectItem('${x.n}', ${x.p})">ACHAT</button>
+                </div></div>`;
+            });
+            hideAll();
+            document.getElementById('view-tarifs').classList.remove('hidden');
+        }
+
+        function selectItem(n, p) {
+            current.name = n; current.price = p;
+            document.getElementById('item-title').innerText = n;
+            hideAll();
+            document.getElementById('view-form').classList.remove('hidden');
+        }
+
+        function preparePay(m) {
+            current.method = m;
+            let num = (m === 'MVOLA') ? "0345400408" : "0323148302";
+            let code = (m === 'MVOLA') ? `*111*1*2*1*${num}*${current.price}*1*0#` : `#144*1*1*${num}*${current.price}#`;
+            document.getElementById('pay-num').innerHTML = `TRANSFERER ${current.price} Ar<br>TO ${num} (${m})`;
+            document.getElementById('btn-ussd').onclick = () => window.location.href = "tel:" + encodeURIComponent(code);
+            hideAll();
+            document.getElementById('view-final').classList.remove('hidden');
+        }
+
+        function submitOrder() {
+            let r = document.getElementById('ref').value;
+            let uid = document.getElementById('uid').value;
+            if(!r || !uid) return alert("Fenoy tsara ny formulaire!");
+            
+            let o = {
+                id: Date.now(),
+                uid: uid,
+                pseudo: document.getElementById('pseudo').value || "No Pseudo",
+                item: current.name,
+                ref: r,
+                status: "⏳ MIANDRY"
+            };
+            orders.push(o);
+            localStorage.setItem('kiosque_v3', JSON.stringify(orders));
+            document.getElementById('overlay-confirm').style.display = 'block';
+        }
+
+        function openLoginAdmin() { document.getElementById('overlay-login').style.display = 'block'; }
+        
+        function validateAdmin() {
+            if(document.getElementById('admin-code').value === "20202404.com") {
+                closeOverlay('overlay-login');
+                document.getElementById('overlay-admin').style.display = 'block';
+                renderAdmin();
+            } else { alert("CODE DISO!"); }
+        }
+
+        function renderAdmin() {
+            const container = document.getElementById('admin-list');
+            container.innerHTML = orders.length ? "" : "<p>Tsisy commande.</p>";
+            orders.forEach((o, i) => {
+                container.innerHTML += `
+                <div class="led-box"><div class="inner" style="text-align:left; font-size:0.9rem">
+                    <b>${o.item}</b> | Ref: ${o.ref}<br>
+                    ID: ${o.uid} (${o.pseudo})<br>
+                    Status: ${o.status}<br>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-gaming" style="padding:5px; font-size:0.7rem; background:green" onclick="updateStatus(${i}, '✅ REÇU')">REÇU</button>
+                        <button class="btn-gaming" style="padding:5px; font-size:0.7rem; background:red" onclick="updateStatus(${i}, '❌ INCORRECT')">DISO</button>
+                    </div>
+                </div></div>`;
+            });
+        }
+
+        function updateStatus(i, s) { 
+            orders[i].status = s; 
+            localStorage.setItem('kiosque_v3', JSON.stringify(orders)); 
+            renderAdmin(); 
+        }
+
+        function openMessages() {
+            document.getElementById('overlay-msg').style.display = 'block';
+            const container = document.getElementById('user-msg-list');
+            container.innerHTML = orders.length ? "" : "<p>Tsy mbola nanao commande ianao.</p>";
+            orders.slice().reverse().forEach(o => {
+                let color = o.status.includes('REÇU') ? '#00ff00' : (o.status.includes('INCORRECT') ? '#ff4444' : '#ffff00');
+                container.innerHTML += `
+                <div class="status-card" style="border-left-color:${color}">
+                    Commande: <b>${o.item}</b><br>
+                    Statut: <span style="color:${color}">${o.status}</span>
+                </div>`;
+            });
+        }
+
+        function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
+    </script>
+</body>
+</html>
